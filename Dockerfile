@@ -11,4 +11,4 @@ RUN find ${DATA_DIR} -exec chgrp 0 {} \; -exec chmod g+rw {} \; -type d -exec ch
 
 USER 1001
 
-ENTRYPOINT ["/usr/bin/znc"]
+ENTRYPOINT ["/usr/bin/znc", "-d", "/var/lib/znc"]
