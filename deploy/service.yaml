@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: znc
+spec:
+  selector:
+    name: znc
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 6667

@@ -1,0 +1,50 @@
+kind: DeploymentConfig
+apiVersion: v1
+metadata:
+  name: znc
+spec:
+  replicas: 1
+  triggers:
+  - type: ConfigChange
+  - type: ImageChange
+    imageChangeParams:
+      automatic: true
+      containerNames:
+      - znc
+      from:
+        kind: ImageStreamTag
+        name: "znc:latest"
+  strategy: 
+    type: Recreate 
+  revisionHistoryLimit: 10 
+  selector:
+    name: znc
+  template: 
+    metadata:
+      labels:
+        name: znc
+    spec:
+      containers:
+      - name: znc
+        image: ""
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6667 
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/znc
+          name: znc-data-dir
+        readinessProbe:
+          tcpSocket:
+            port: 6667 
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 6667
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      volumes:
+      - name: znc-data-dir
+        persistentVolumeClaim:
+          claimName: znc

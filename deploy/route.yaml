@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: znc
+spec:
+  tls:
+    termination: reencrypt
+    destinationCACertificate: " " 
+  to:
+    kind: Service
+    name: znc
