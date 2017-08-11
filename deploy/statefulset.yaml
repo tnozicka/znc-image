@@ -1,0 +1,51 @@
+kind: StatefulSet 
+apiVersion: apps/v1beta1
+metadata:
+  name: znc
+  annotations:
+    "image.alpha.openshift.io/triggers": |
+      [
+        {"from":{"kind":"ImageStreamTag","name":"znc:latest"},"fieldPath":"spec.containers[0].image"}, 
+      ]
+spec:
+  serviceName: znc
+  replicas: 1
+  revisionHistoryLimit: 10 
+  updateStrategy:
+  type: RollingUpdate
+  template: 
+    metadata:
+      labels:
+        name: znc
+    spec:
+      terminationGracePeriod: 3
+      containers:
+      - name: znc
+        # fallback for OpenShift < v3.6.0 not capable of triggering StatefulSets
+        image: "docker.io/tnozicka/znc:latest"
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "32Mi"
+          limits:
+            memory: "64Mi"
+        ports:
+        - containerPort: 6667 
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/znc
+          name: znc-data-dir
+        readinessProbe:
+          tcpSocket:
+            port: 6667 
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 6667
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      volumes:
+      - name: znc-data-dir
+        persistentVolumeClaim:
+          claimName: znc
