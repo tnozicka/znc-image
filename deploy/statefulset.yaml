@@ -3,9 +3,9 @@ apiVersion: apps/v1beta1
 metadata:
   name: znc
   annotations:
-    "image.alpha.openshift.io/triggers": |
+    image.alpha.openshift.io/triggers: |-
       [
-        {"from":{"kind":"ImageStreamTag","name":"znc:latest"},"fieldPath":"spec.containers[0].image"}, 
+        {"from":{"kind":"ImageStreamTag","name":"znc:latest"},"fieldPath":"spec.template.spec.containers[0].image"}
       ]
 spec:
   serviceName: znc
